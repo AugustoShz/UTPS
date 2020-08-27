@@ -8,6 +8,10 @@ public class ConexaoBanco
 	{
 		_conStr = "Server=localhost;Port=3306;Database=projeto;Uid=root;Pwd=root";
 	}
+    public DataTable procurarCNPJ(string CNPJ)
+    {
+        return this.select("Select * from Empresa WHERE CNPJ = " + CNPJ);
+    }
 
 	public DataTable select(string query)
     {

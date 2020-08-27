@@ -6,12 +6,14 @@ namespace Selecao.Classes
 {
     class Requests
     {
-        public Empresa Get(string url)
+        string ApiURL = "https://www.receitaws.com.br/v1/cnpj/";
+        public Empresa GetEmpresa(string cnpj)
         {
             Empresa json = null;
+
             try
             {
-                var resposta = new WebClient().DownloadData(url);
+                var resposta = new WebClient().DownloadData(ApiURL + cnpj);
                 var readOnlySpan = new ReadOnlySpan<byte>(resposta);
                 json = JsonSerializer.Deserialize<Empresa>(readOnlySpan);
             }
