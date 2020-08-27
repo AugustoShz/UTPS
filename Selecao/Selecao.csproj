@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Classes\Administracao.cs" />
     <Compile Include="Classes\Atividades.cs" />
+    <Compile Include="Classes\EncontrarEmpresa.cs" />
     <Compile Include="Classes\Empresa.cs" />
     <Compile Include="Classes\Requests.cs" />
     <Compile Include="Classes\ConexaoBanco.cs" />

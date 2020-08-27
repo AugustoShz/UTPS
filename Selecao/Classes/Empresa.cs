@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using System.Data;
 
 namespace Selecao.Classes
 {
@@ -22,13 +24,25 @@ namespace Selecao.Classes
         public string numero { get; set; }
         public string cep { get; set; }
         public string municipio { get; set; }
-        public string porte { get; set; }
         public string abertura { get; set; }
         public string natureza_juridica { get; set; }
         public string fantasia { get; set; }
         public string cnpj { get; set; }
         public string ultima_atualizacao { get; set; }
         public string capital_social { get; set; }
-        public string cnpj { get; set; }
+
+        public DataTable toDataTable()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Propriedade");
+            dt.Columns.Add("Valor");
+            foreach (PropertyInfo info in typeof(Empresa).GetProperties())
+            {
+                dt.Rows.Add(info.Name, info.GetValue(this));
+            }
+
+            dt.AcceptChanges();
+            return dt;
+        }
     }
 }

@@ -8,9 +8,14 @@ namespace Selecao.Classes
     {
         public Empresa Get(string url)
         {
-            var resposta = new WebClient().DownloadData(url);
-            var readOnlySpan = new ReadOnlySpan<byte>(resposta);
-            Empresa json = JsonSerializer.Deserialize<Empresa>(readOnlySpan);
+            Empresa json = null;
+            try
+            {
+                var resposta = new WebClient().DownloadData(url);
+                var readOnlySpan = new ReadOnlySpan<byte>(resposta);
+                json = JsonSerializer.Deserialize<Empresa>(readOnlySpan);
+            }
+            catch(Exception x){}
 
             return json;
         }
