@@ -13,7 +13,10 @@ public class ConexaoBanco
 	}
     public Empresa procurarCNPJ(string CNPJ)
     {
-        return this.select("Select * from Empresa WHERE CNPJ = " + CNPJ);
+        return this.select("SELECT E.CNPJ, E.nome, E.telefone, E.email, E.fantasia, E.capital_social, E.situacao, T.descricao as Tipo, EN.logradouro, EN.bairro, EN.numero, EN.complemento, EN.uf, EN.cep, EN.municipio FROM Empresa E " +
+                            "LEFT JOIN TipoEmpresa T ON T.IdTipo = E.IdTipo "+
+                            "LEFT JOIN Endereco EN ON EN.IdEndereco = E.IdEndereco " +
+                            "WHERE E.CNPJ = " + CNPJ);
     }
 
 	public Empresa select(string query)
@@ -139,23 +142,29 @@ public class ConexaoBanco
 
     private Empresa dataTableToEmpresa(DataTable tabela) {
         Empresa retorno = new Empresa();
-
         try
         {
             retorno.nome = tabela.Rows[0][1].ToString();
             retorno.telefone = tabela.Rows[1][1].ToString();
             retorno.email = tabela.Rows[2][1].ToString();
-            retorno.natureza_juridica = tabela.Rows[3][1].ToString();
-            retorno.fantasia = tabela.Rows[4][1].ToString();
-            retorno.capital_social = tabela.Rows[5][1].ToString();
-            retorno.situacao = tabela.Rows[6][1].ToString();
+            retorno.fantasia = tabela.Rows[3][1].ToString();
+            retorno.capital_social = tabela.Rows[4][1].ToString();
+            retorno.situacao = tabela.Rows[5][1].ToString();
+            retorno.tipo = tabela.Rows[6][1].ToString();
+            retorno.logradouro = tabela.Rows[7][1].ToString();
+            retorno.bairro = tabela.Rows[8][1].ToString();
+            retorno.numero = tabela.Rows[9][1].ToString();
+            retorno.complemento = tabela.Rows[10][1].ToString();
+            retorno.uf = tabela.Rows[11][1].ToString();
+            retorno.cep = tabela.Rows[12][1].ToString();
+            retorno.municipio = tabela.Rows[13][1].ToString();
             retorno.status = "OK";
         }
         catch (Exception x) {
             retorno.status = "ERRO";
             retorno.message = "CNPJ INVALIDO OU NÃO ENCONTRADO";
         }
-
+        
         return retorno;
     }
 }

@@ -156,7 +156,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(208, 183);
+            this.ClientSize = new System.Drawing.Size(208, 149);
             this.Controls.Add(this.btnAtt);
             this.Controls.Add(this.lblBDStatus);
             this.Controls.Add(this.lblBD);
