@@ -2,7 +2,7 @@ drop database projeto;
 create database projeto;
 use projeto;
 create table Pessoa(
-IdPessoa int primary key not null,
+IdPessoa int primary key not null auto_increment,
 nome varchar(80)
 );
 
@@ -12,25 +12,18 @@ descricao varchar(100)
 );
 
 create table TipoEmpresa(
-IdTipo int primary key not null,
+IdTipo int primary key not null auto_increment,
 descricao varchar(255)
 );
 
-create table Situacao(
-IdSituacao int primary key not null,
-CNPJ varchar(14),
-data_situacao datetime,
-situacao varchar(20)
-);
-
 create table Endereco(
-IdEndereco int primary key not null,
+IdEndereco int primary key not null auto_increment,
 logradouro varchar(255),
 bairro varchar(30),
 numero int,
 complemento varchar(255),
 uf char(2),
-cep varchar(9),
+cep varchar(10),
 municipio varchar(20)
 );
 
@@ -39,14 +32,12 @@ CNPJ varchar(14) primary key not null,
 nome varchar(100),
 telefone varchar(40),
 email varchar(40),
-abertura DATE,
 natureza_juridica varchar(50),
 fantasia varchar(100),
-ultima_atualizacao date,
 capital_social decimal(12,2),
+situacao varchar(20),
 IdTipo int,
 codigoAt varchar(10),
-IdSituacao int,
 IdEndereco int
 );
 
@@ -61,17 +52,9 @@ IdPessoa int,
 cargo varchar(30)
 );
 
-ALTER TABLE Situacao
-ADD CONSTRAINT fk_situacaoEmpresa
-FOREIGN KEY (CNPJ) REFERENCES Empresa(CNPJ); 
-
 ALTER TABLE Empresa
 ADD CONSTRAINT fk_EmpresaTipo
 FOREIGN KEY (IdTipo) REFERENCES TipoEmpresa(IdTipo);
-
-ALTER TABLE Empresa
-ADD CONSTRAINT fk_EmpresaSituacao
-FOREIGN KEY (IdSituacao) REFERENCES Situacao(IdSituacao);
 
 ALTER TABLE Empresa
 ADD CONSTRAINT fk_EmpresaAtividadePrincipal
@@ -104,3 +87,5 @@ FOREIGN KEY (CNPJ) REFERENCES Empresa(CNPJ);
 ALTER TABLE administracao
 ADD CONSTRAINT fk_admPessoa
 FOREIGN KEY (IdPessoa) REFERENCES Pessoa(IdPessoa);
+
+INSERT INTO TipoEmpresa values(NULL,"MATRIZ"),(NULL,"FILIAL");

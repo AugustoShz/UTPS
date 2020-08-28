@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Selecao.Classes
 {
-    class Requests
+    public class Requests
     {
         string ApiURL = "https://www.receitaws.com.br/v1/cnpj/";
         public Empresa GetEmpresa(string cnpj)

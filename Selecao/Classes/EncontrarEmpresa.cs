@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Windows.Forms;
 
 namespace Selecao.Classes
 {
@@ -9,40 +10,33 @@ namespace Selecao.Classes
         Requests requests = new Requests();
         ConexaoBanco cb = new ConexaoBanco();
 
-        public Tuple<DataTable,int> pesquisar(string CNPJ)
+        public Tuple<Empresa,int> pesquisar(string CNPJ)
         {
-            DataTable aux = null;
+            Empresa aux = null;
 
             aux = pesquisarBanco(CNPJ);
-            if (aux.Columns.Count > 1)
+            if (!aux.status.Equals("ERRO"))
                 return Tuple.Create(aux, 0);
 
             aux = pesquisarAPI(CNPJ);
-            if (aux != null)
+            if (!aux.status.Equals("ERROR"))
                 return Tuple.Create(aux, 1);
 
-            aux = null;
             return Tuple.Create(aux, 2);
         }
 
-        public DataTable pesquisarBanco(string CNPJ)
+        public Empresa pesquisarBanco(string CNPJ)
         {
-            DataTable retorno = this.cb.procurarCNPJ(CNPJ);
+            Empresa retorno = this.cb.procurarCNPJ(CNPJ);
 
             return retorno;
         }
 
-        public DataTable pesquisarAPI(string CNPJ)
+        public Empresa pesquisarAPI(string CNPJ)
         {
             Empresa emp = this.requests.GetEmpresa(CNPJ);
-            DataTable retorno = null;
-            if (emp != null)
-            {
-                retorno = new DataTable();
-                retorno = emp.toDataTable();
-            }
 
-            return retorno;
+            return emp;
         }
     }
 }

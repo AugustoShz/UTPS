@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Selecao.Classes
 {
-    class Empresa
+    public class Empresa
     {
         public string status { get; set; }
         public string message { get; set; }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Selecao.Classes
 {
-    class Administracao
+    public class Administracao
     {
         public string qual { get; set; }
         public string nome { get; set; }

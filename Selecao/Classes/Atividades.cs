@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Selecao.Classes
 {
-    class Atividades
+    public class Atividades
     {
         public string text { get; set; }
         public string code { get; set; }

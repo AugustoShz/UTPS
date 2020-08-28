@@ -1,28 +1,113 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
+using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using Selecao.Classes;
 
 public class ConexaoBanco
 {
 	string _conStr = string.Empty;
 	public ConexaoBanco()
 	{
-		_conStr = "Server=localhost;Port=3306;Database=projeto;Uid=root;Pwd=root";
+		this._conStr = "Server=localhost;Port=3306;Database=projeto;Uid=root;Pwd=root";
 	}
-    public DataTable procurarCNPJ(string CNPJ)
+    public Empresa procurarCNPJ(string CNPJ)
     {
         return this.select("Select * from Empresa WHERE CNPJ = " + CNPJ);
     }
 
-	public DataTable select(string query)
+	public Empresa select(string query)
     {
-
-		MySqlConnection _con = new MySqlConnection(_conStr);
+		MySqlConnection _con = new MySqlConnection(this._conStr);
 		DataTable _table = new DataTable();
 		MySqlDataAdapter _adp = new MySqlDataAdapter(query, _con);
-		_con.Close();
-
 		_adp.Fill(_table);
-        return GenerateTransposedTable(_table);
+        _con.Close();
+        _table = GenerateTransposedTable(_table);
+
+        return dataTableToEmpresa(_table);
+    }
+
+    public void inserir(Empresa e, string CNPJ)
+    {
+        MySqlConnection _con = new MySqlConnection(this._conStr);
+        _con.Open();
+
+        this.inserirEndereco(e, _con);
+
+        foreach (Atividades a in e.atividade_principal)
+            this.inserirAtividade(a, CNPJ, _con);
+
+        foreach (Atividades a in e.atividades_secundarias)
+            this.inserirAtividade(a, CNPJ, _con);
+
+        this.inserirEmpresa(e, CNPJ, _con);
+
+        _con.Close();
+    }
+    private void inserirEmpresa(Empresa e, string CNPJ, MySqlConnection _con)
+    {
+        string queryEmpresa = "INSERT INTO Empresa VALUES('" + CNPJ + "','" + e.nome + "','" + e.telefone + "','" + e.email + "','" + e.natureza_juridica + "','" + e.fantasia + "'," + e.capital_social + ",'" + e.situacao + "',NULL,NULL,NULL);";
+        MySqlCommand command = new MySqlCommand(queryEmpresa, _con);
+        command.ExecuteNonQuery();
+    }
+    private void inserirPessoa(Administracao pessoa, MySqlConnection _con)
+    {
+        string queryPessoa = "INSERT INTO Pessoa VALUES (0, "+_con+");";
+        MySqlCommand command = new MySqlCommand(queryPessoa, _con);
+        command.ExecuteNonQuery();
+    }
+
+    private void inserirEndereco(Empresa e, MySqlConnection _con)
+    {
+        try
+        {
+            string queryEndereco = "INSERT INTO Endereco VALUES (NULL,'" + e.logradouro + "','" + e.bairro + "'," + e.numero + ",'" + e.complemento + "','" + e.uf + "','" + e.cep + "','" + e.municipio + "');";
+            MySqlCommand command = new MySqlCommand(queryEndereco, _con);
+            command.ExecuteNonQuery();
+        }
+        catch(Exception x) { }
+    }
+
+    private void inserirAtividade(Atividades at, string CNPJ, MySqlConnection _con)
+    {
+        try
+        {
+            string queryAtividade = "INSERT INTO Atividade VALUES ("+ at.code + ","+at.text+");";
+            MySqlCommand command = new MySqlCommand(queryAtividade, _con);
+            command.ExecuteNonQuery();
+        }catch(Exception x){}
+    }
+    
+    public void remover(string CNPJ)
+    {
+        MySqlConnection _con = new MySqlConnection(this._conStr);
+        _con.Open();
+        removerAtividadesSecundarias(CNPJ, _con);
+        removerADM(CNPJ, _con);
+        removerEmpresa(CNPJ, _con);
+        _con.Close();
+
+    }
+
+    private void removerAtividadesSecundarias(string CNPJ, MySqlConnection _con)
+    {
+            string query = "DELETE FROM atividades_secundarias WHERE CNPJ = "+CNPJ;
+            MySqlCommand command = new MySqlCommand(query, _con);
+            command.ExecuteNonQuery();
+    }
+
+    private void removerADM(string CNPJ, MySqlConnection _con)
+    {
+            string query = "DELETE FROM administracao WHERE CNPJ = " + CNPJ;
+            MySqlCommand command = new MySqlCommand(query, _con);
+            command.ExecuteNonQuery();
+    }
+    private void removerEmpresa(string CNPJ, MySqlConnection _con)
+    {
+            string query = "DELETE FROM Empresa WHERE CNPJ = " + CNPJ;
+            MySqlCommand command = new MySqlCommand(query, _con);
+            command.ExecuteNonQuery();
     }
 
     private DataTable GenerateTransposedTable(DataTable inputTable)
@@ -50,5 +135,27 @@ public class ConexaoBanco
         }
 
         return outputTable;
+    }
+
+    private Empresa dataTableToEmpresa(DataTable tabela) {
+        Empresa retorno = new Empresa();
+
+        try
+        {
+            retorno.nome = tabela.Rows[0][1].ToString();
+            retorno.telefone = tabela.Rows[1][1].ToString();
+            retorno.email = tabela.Rows[2][1].ToString();
+            retorno.natureza_juridica = tabela.Rows[3][1].ToString();
+            retorno.fantasia = tabela.Rows[4][1].ToString();
+            retorno.capital_social = tabela.Rows[5][1].ToString();
+            retorno.situacao = tabela.Rows[6][1].ToString();
+            retorno.status = "OK";
+        }
+        catch (Exception x) {
+            retorno.status = "ERRO";
+            retorno.message = "CNPJ INVALIDO OU NÃO ENCONTRADO";
+        }
+
+        return retorno;
     }
 }
